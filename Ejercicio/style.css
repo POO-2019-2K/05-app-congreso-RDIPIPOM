@@ -6,3 +6,7 @@ body{
 .jumbotron{
     background-color: saddlebrown;
 }
+
+form{
+    margin: 5px;
+}
