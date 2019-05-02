@@ -22,6 +22,10 @@
             <div class="col-4">
                 <form id="form" class="needs-validation" novalidate>
                     <div class="form-group">
+                        <label for="IDcourse">ID del curso:</label>
+                        <input id="IDcourse" class="form-control" type="number" required>
+                    </div>
+                    <div class="form-group">
                         <label for="courseName">Nombre del curso:</label>
                         <input id="courseName" class="form-control" type="text" required>
                     </div>
@@ -50,11 +54,13 @@
                 <table id="tableCourses" class="table table-dark">
                     <thead>
                         <tr>
+                            <th>ID</th>
                             <th>Taller</th>
                             <th>Fecha de inicio</th>
                             <th>Fecha de término</th>
                             <th>Cantidad de lugares</th>
                             <th>Duración (horas)</th>
+                            <th>Opciones</th>
                         </tr>
                     </thead>
                     <tbody>

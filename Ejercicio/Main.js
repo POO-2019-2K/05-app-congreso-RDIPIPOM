@@ -41,6 +41,7 @@ export default class Main {
 
         //Create object
         let objCourse = {
+            ID: Number(document.querySelector('#IDcourse').value),
             name: document.querySelector('#courseName').value,
             stringStartDate: stringStartDate,
             stringFinishDate: stringFinishDate,
