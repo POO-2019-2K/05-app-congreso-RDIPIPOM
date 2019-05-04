@@ -1,4 +1,3 @@
-import TableMembers from './TableMembers.js';
 import TableCourses from './TableCourses.js';
 
 export default class Main {
@@ -7,9 +6,8 @@ export default class Main {
         if (localStorage.getItem('courses') != null) {
             courses = JSON.parse(localStorage.getItem('courses'));
         }
-
-        let tableMembers = new TableMembers(document.querySelector('#tableMembers'));
-        let tableCourses = new TableCourses(document.querySelector('#tableCourses'));
+        
+        let tableCourses = new TableCourses(document.querySelector('#tableCourses'), document.querySelector('#tableMembers'));
 
         document.querySelector('#btnAdd').addEventListener('click', () => {
             if (document.querySelector('#form').checkValidity()) {
@@ -46,7 +44,8 @@ export default class Main {
             stringStartDate: stringStartDate,
             stringFinishDate: stringFinishDate,
             spaceAvailable: Number(document.querySelector('#spaceAvailable').value),
-            duration: Number(document.querySelector('#duration').value)
+            duration: Number(document.querySelector('#duration').value),
+            members: new Array()
         }
 
         return objCourse;

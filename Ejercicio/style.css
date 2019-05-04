@@ -10,3 +10,24 @@ body{
 form{
     margin: 5px;
 }
+
+th{
+    text-align: center;
+    background-color: blueviolet
+}
+
+tr{
+    text-align: center;
+}
+
+
+.divFormRegisterMember{    
+    background-color: blue;
+    position: absolute;
+    left: 50%;
+    top: 100px;
+    transform: translateX(-50%);
+    z-index: 1;
+    width: 70%;
+    height: 500px;
+}
