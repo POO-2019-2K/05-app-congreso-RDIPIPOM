@@ -2,22 +2,31 @@ import TableMembers from './TableMembers.js';
 
 export default class TableCourses {
     constructor(tableCourses, tableMembers) {
+        //localStorage.removeItem('courseActive');
         this._table = tableCourses;
         this._courses = new Array();
         this._tableMembers = new TableMembers(tableMembers);
         this._initTable();
     }
 
-    _initTable() {
-        //Fill array courses
+    _updateArrayCourses() {
         if (localStorage.getItem('courses') != null) {
             this._courses = JSON.parse(localStorage.getItem('courses'));
         }
+    }
 
+    _initTable() {
+        //Fill array courses
+        this._updateArrayCourses();
         //Add to table
         this._courses.forEach((objCourse) => {
             this.addCourse(objCourse);
         });
+
+        //Listenner of the form modal
+        document.querySelector('#btnRegister').addEventListener('click', () => {
+            this.addMember();
+        })
     }
 
     addCourse(objCourse) {
@@ -53,9 +62,9 @@ export default class TableCourses {
         btnViewMembers.className = 'btn btn-primary';
 
         //Add listenners
-        document.querySelector('#btnRegister').addEventListener('click', () => {
-            this.addMember(course);
-        })
+        btnAddMember.addEventListener('click', () => {
+            localStorage.setItem('courseActive', course.ID);
+        });
 
         btnViewMembers.addEventListener('click', () => {
             this._tableMembers.update(course.ID);
@@ -68,7 +77,7 @@ export default class TableCourses {
         row.cells[7].appendChild(btnViewMembers);
     }
 
-    addMember(course) {
+    addMember() {
         //Create object Member
         let objMember = {
             name: document.querySelector('#name').value,
@@ -76,7 +85,17 @@ export default class TableCourses {
             birthday: document.querySelector('#birthday').value
         };
 
-        console.log(objMember);
+        //Update Array courses
+        this._updateArrayCourses();
+
+        //Found course in order to edit
+        let course;
+        let ID = Number(localStorage.getItem('courseActive'));
+        this._courses.forEach((objCourse) => {
+            if (objCourse.ID === ID) {
+                course = objCourse;
+            }
+        });
 
         //Fill array with all members of this course and put the new
         let arrayMembers = new Array();
@@ -85,7 +104,7 @@ export default class TableCourses {
         course.members = arrayMembers;
 
         this._courses.forEach((objCourse) => {
-            if(objCourse.ID === course.ID){
+            if (objCourse.ID === course.ID) {
                 objCourse = course;
                 return;
             }
@@ -95,5 +114,9 @@ export default class TableCourses {
 
         //Update table members
         this._tableMembers.update(course.ID);
+    }
+
+    _foundCourse(ID) {
+
     }
 }
