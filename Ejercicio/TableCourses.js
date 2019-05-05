@@ -2,11 +2,11 @@ import TableMembers from './TableMembers.js';
 
 export default class TableCourses {
     constructor(tableCourses, tableMembers) {
-        //localStorage.removeItem('courseActive');
+        //localStorage.removeItem('courses');
         this._table = tableCourses;
         this._courses = new Array();
         this._tableMembers = new TableMembers(tableMembers);
-        this._initTable();        
+        this._update();
         //Listenner of the form modal
         document.querySelector('#btnRegister').addEventListener('click', () => {
             this.addMember();
@@ -18,24 +18,21 @@ export default class TableCourses {
         for (let i = this._table.rows.length - 1; i > 1; i--) {
             this._table.deleteRow(i);
         }
-
-        //Fill the table with new members
-        this._initTable();
+        //Fill the table with new members        
+        this._updateArrayCourses(); //Fill array courses
+        //Add to table
+        this._courses.forEach((objCourse) => {
+            this.addCourse(objCourse);
+        });
+        if (localStorage.getItem('courses') != null) {
+            this._tableMembers._update(this._courses[0].ID);
+        }
     }
 
     _updateArrayCourses() {
         if (localStorage.getItem('courses') != null) {
             this._courses = JSON.parse(localStorage.getItem('courses'));
         }
-    }
-
-    _initTable() {
-        //Fill array courses
-        this._updateArrayCourses();
-        //Add to table
-        this._courses.forEach((objCourse) => {
-            this.addCourse(objCourse);
-        });
     }
 
     addCourse(objCourse) {
@@ -58,14 +55,13 @@ export default class TableCourses {
     }
 
     _addBtnAddMemberAndBtnViewMembers(row, course) {
-        //Create buttons       
+        //Create buttons
         let btnAddMember = document.createElement("input");
         btnAddMember.type = "button";
         btnAddMember.value = 'Añadir Participante';
         btnAddMember.className = 'btn btn-primary';
         btnAddMember.setAttribute('data-toggle', 'modal');
         btnAddMember.setAttribute('data-target', '#dialogo1');
-
 
         let btnViewMembers = document.createElement("input");
         btnViewMembers.type = "button";
@@ -86,6 +82,9 @@ export default class TableCourses {
         row.cells[7].appendChild(btnAddMember);
         row.insertCell(8);
         row.cells[8].appendChild(btnViewMembers);
+
+        //Update the table members
+        this._tableMembers._update(course.ID);
     }
 
     addMember() {
@@ -131,7 +130,6 @@ export default class TableCourses {
 
                 //Update tables
                 this._update();
-                this._tableMembers._update(course.ID);
             } else {
                 swal.fire({
                     type: 'warning',
@@ -152,11 +150,11 @@ export default class TableCourses {
     _isSpaceAvailable(IDcourse) {
         let isSpaceAvailable = false;
         this._courses.forEach((objCourse) => {
-            if (Number(objCourse.ID) == IDcourse && objCourse.spaceAvailable > objCourse.registeredMembers) {           
+            if (Number(objCourse.ID) == IDcourse && objCourse.spaceAvailable > objCourse.registeredMembers) {
                 isSpaceAvailable = true;
                 return;
             }
-        });        
+        });
         return isSpaceAvailable;
     }
 }
