@@ -32,7 +32,7 @@ export default class TableMembers {
         cell.innerHTML = member.birthday;
     }
 
-    update(IDcourse) {
+    _update(IDcourse) {
         //Remove all rows of the table
         for (let i = this._table.rows.length - 1; i > 1; i--) {
             this._table.deleteRow(i);

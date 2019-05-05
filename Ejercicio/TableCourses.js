@@ -6,6 +6,20 @@ export default class TableCourses {
         this._table = tableCourses;
         this._courses = new Array();
         this._tableMembers = new TableMembers(tableMembers);
+        this._initTable();        
+        //Listenner of the form modal
+        document.querySelector('#btnRegister').addEventListener('click', () => {
+            this.addMember();
+        })
+    }
+
+    _update() {
+        //Remove all rows of the table
+        for (let i = this._table.rows.length - 1; i > 1; i--) {
+            this._table.deleteRow(i);
+        }
+
+        //Fill the table with new members
         this._initTable();
     }
 
@@ -22,11 +36,6 @@ export default class TableCourses {
         this._courses.forEach((objCourse) => {
             this.addCourse(objCourse);
         });
-
-        //Listenner of the form modal
-        document.querySelector('#btnRegister').addEventListener('click', () => {
-            this.addMember();
-        })
     }
 
     addCourse(objCourse) {
@@ -42,6 +51,8 @@ export default class TableCourses {
         cell = row.insertCell(4);
         cell.innerHTML = objCourse.spaceAvailable;
         cell = row.insertCell(5);
+        cell.innerHTML = objCourse.registeredMembers;
+        cell = row.insertCell(6);
         cell.innerHTML = objCourse.duration;
         this._addBtnAddMemberAndBtnViewMembers(row, objCourse);
     }
@@ -67,56 +78,85 @@ export default class TableCourses {
         });
 
         btnViewMembers.addEventListener('click', () => {
-            this._tableMembers.update(course.ID);
+            this._tableMembers._update(course.ID);
         });
 
         //Add to HTML
-        row.insertCell(6);
-        row.cells[6].appendChild(btnAddMember);
         row.insertCell(7);
-        row.cells[7].appendChild(btnViewMembers);
+        row.cells[7].appendChild(btnAddMember);
+        row.insertCell(8);
+        row.cells[8].appendChild(btnViewMembers);
     }
 
     addMember() {
-        //Create object Member
-        let objMember = {
-            name: document.querySelector('#name').value,
-            email: document.querySelector('#email').value,
-            birthday: document.querySelector('#birthday').value
-        };
+        if (document.querySelector('#formMember').checkValidity()) {
+            //Update Array courses
+            this._updateArrayCourses();
+            //Get ID of the course active
+            let ID = Number(localStorage.getItem('courseActive'));
+            if (this._isSpaceAvailable(ID)) {
+                //Create object Member
+                let objMember = {
+                    name: document.querySelector('#name').value,
+                    email: document.querySelector('#email').value,
+                    birthday: document.querySelector('#birthday').value
+                };
 
-        //Update Array courses
-        this._updateArrayCourses();
+                //Found course in order to edit
+                let course;
+                this._courses.forEach((objCourse) => {
+                    if (objCourse.ID === ID) {
+                        course = objCourse;
+                    }
+                });
 
-        //Found course in order to edit
-        let course;
-        let ID = Number(localStorage.getItem('courseActive'));
-        this._courses.forEach((objCourse) => {
-            if (objCourse.ID === ID) {
-                course = objCourse;
+                //Fill array with all members of this course and put the new
+                let arrayMembers = new Array();
+                arrayMembers = course.members;
+                arrayMembers.push(objMember);
+                course.members = arrayMembers;
+
+                //Add one member to the attribute RegisteredMembers
+                course.registeredMembers++;
+
+                //Update all courses
+                this._courses.forEach((objCourse) => {
+                    if (objCourse.ID === course.ID) {
+                        objCourse = course;
+                        return;
+                    }
+                });
+
+                localStorage.setItem('courses', JSON.stringify(this._courses));
+
+                //Update tables
+                this._update();
+                this._tableMembers._update(course.ID);
+            } else {
+                swal.fire({
+                    type: 'warning',
+                    title: 'Advertencia',
+                    text: 'No existe suficiente espacio en este curso para registrar a una nueva persona'
+                })
             }
-        });
-
-        //Fill array with all members of this course and put the new
-        let arrayMembers = new Array();
-        arrayMembers = course.members;
-        arrayMembers.push(objMember);
-        course.members = arrayMembers;
-
-        this._courses.forEach((objCourse) => {
-            if (objCourse.ID === course.ID) {
-                objCourse = course;
-                return;
-            }
-        });
-
-        localStorage.setItem('courses', JSON.stringify(this._courses));
-
-        //Update table members
-        this._tableMembers.update(course.ID);
+        }
+        else {
+            swal.fire({
+                type: 'warning',
+                title: 'Advertencia',
+                text: 'Datos incompletos'
+            })
+        }
     }
 
-    _foundCourse(ID) {
-
+    _isSpaceAvailable(IDcourse) {
+        let isSpaceAvailable = false;
+        this._courses.forEach((objCourse) => {
+            if (Number(objCourse.ID) == IDcourse && objCourse.spaceAvailable > objCourse.registeredMembers) {           
+                isSpaceAvailable = true;
+                return;
+            }
+        });        
+        return isSpaceAvailable;
     }
 }
