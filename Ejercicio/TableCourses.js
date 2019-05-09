@@ -24,7 +24,7 @@ export default class TableCourses {
         this._courses.forEach((objCourse) => {
             this.addCourse(objCourse);
         });
-        if (localStorage.getItem('courses') != null) {
+        if (localStorage.getItem('courses') != null && this._courses.length > 0) {
             this._tableMembers._update(this._courses[0].ID);
         }
     }
@@ -59,7 +59,7 @@ export default class TableCourses {
         let btnAddMember = document.createElement("input");
         btnAddMember.type = "button";
         btnAddMember.value = 'Añadir Participante';
-        btnAddMember.className = 'btn btn-primary';
+        btnAddMember.className = 'btn btn-success';
         btnAddMember.setAttribute('data-toggle', 'modal');
         btnAddMember.setAttribute('data-target', '#dialogo1');
 
@@ -67,6 +67,11 @@ export default class TableCourses {
         btnViewMembers.type = "button";
         btnViewMembers.value = 'Ver participantes';
         btnViewMembers.className = 'btn btn-primary';
+
+        let btnDeleteCourse = document.createElement("input");
+        btnDeleteCourse.type = "button";
+        btnDeleteCourse.value = 'Eliminar';
+        btnDeleteCourse.className = 'btn btn-danger';
 
         //Add listenners
         btnAddMember.addEventListener('click', () => {
@@ -77,14 +82,47 @@ export default class TableCourses {
             this._tableMembers._update(course.ID);
         });
 
+        btnDeleteCourse.addEventListener('click', () => {
+            this._deleteCourse(course.ID);
+        });
+
         //Add to HTML
         row.insertCell(7);
         row.cells[7].appendChild(btnAddMember);
         row.insertCell(8);
         row.cells[8].appendChild(btnViewMembers);
+        row.insertCell(9);
+        row.cells[9].appendChild(btnDeleteCourse);
 
         //Update the table members
         this._tableMembers._update(course.ID);
+    }
+
+    _deleteCourse(ID) {
+        this._updateArrayCourses();    
+        //Find course    
+        this._courses.forEach((objCourse, indexCourse) => {
+            if (objCourse.ID === ID) {
+                //Does course have members?
+                if (objCourse.registeredMembers === 0) {
+                    //Delete course and save
+                    this._courses.splice(indexCourse, 1);
+                    localStorage.setItem('courses', JSON.stringify(this._courses));
+                    this._update();
+                    swal.fire({
+                        type: 'success',
+                        title: 'Taller eliminado',
+                    })
+                } else {
+                    swal.fire({
+                        type: 'warning',
+                        title: 'Advertencia',
+                        text: 'No es posible eliminar el taller debido ha que hay participantes incritos'
+                    })                    
+                }
+                return;
+            }
+        });
     }
 
     addMember() {

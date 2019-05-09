@@ -4,16 +4,21 @@ export default class TableMembers {
         this._courses = new Array();
     }
 
-    initTable(IDcourse) {
+    _updateArrayCourses() {
         if (localStorage.getItem('courses') != null) {
             this._courses = JSON.parse(localStorage.getItem('courses'));
         }
+    }
 
+    initTable(IDcourse) {
+        //Update Array Courses
+        this._updateArrayCourses();
+        //Found the course and show in the table
         this._courses.forEach((objCourse) => {
             if (objCourse.ID === IDcourse) {
                 if (objCourse.members != null) {
                     objCourse.members.forEach((member) => {
-                        this._addMember(member);
+                        this._addMember(objCourse.ID, member);
                     });
                 } else {
                     return;
@@ -22,7 +27,14 @@ export default class TableMembers {
         });
     }
 
-    _addMember(member) {
+    _addMember(IDcourse, member) {
+        //Create button to delete the member
+        let btnDeleteMember = document.createElement("input");
+        btnDeleteMember.type = "button";
+        btnDeleteMember.value = 'Eliminar';
+        btnDeleteMember.className = 'btn btn-danger';
+
+        //Show information in the table
         let row = this._table.insertRow(-1);
         let cell = row.insertCell(0);
         cell.innerHTML = member.name;
@@ -30,6 +42,43 @@ export default class TableMembers {
         cell.innerHTML = member.email;
         cell = row.insertCell(2);
         cell.innerHTML = member.birthday;
+        cell = row.insertCell(3);
+        cell.appendChild(btnDeleteMember);
+
+        //Add listenners
+        btnDeleteMember.addEventListener('click', () => {
+            //To delete the member the key primary will be his email
+            this._deleteMember(IDcourse, member.email);
+        });
+    }
+
+    _deleteMember(IDcourse, email) {
+        //Update array courses
+        this._updateArrayCourses();
+        //Index of the member
+        let indexMember = -1;
+        //Found the course
+        this._courses.forEach((objCourse, indexCourse) => {
+            if (objCourse.ID === IDcourse) {
+                //Found the member with his email
+                objCourse.members.forEach((objMember, index) => {
+                    if (objMember.email === email) {
+                        indexMember = index;
+                        return;
+                    }
+                });
+                //Delete member
+                objCourse.registeredMembers--;
+                objCourse.members.splice(indexMember, 1);
+                //Update Array courses
+                this._courses.splice(indexCourse, 1, objCourse);
+                return;
+            }
+        });
+        //Save courses
+        localStorage.setItem('courses', JSON.stringify(this._courses));
+        //Update the table
+        this._update(IDcourse);
     }
 
     _update(IDcourse) {
