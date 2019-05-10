@@ -2,7 +2,6 @@ import TableMembers from './TableMembers.js';
 
 export default class TableCourses {
     constructor(tableCourses, tableMembers) {
-        //localStorage.removeItem('courses');
         this._table = tableCourses;
         this._courses = new Array();
         this._tableMembers = new TableMembers(tableMembers, this);
@@ -168,6 +167,7 @@ export default class TableCourses {
 
                 //Update tables
                 this._update();
+                this._tableMembers._update(ID);
             } else {
                 swal.fire({
                     type: 'warning',

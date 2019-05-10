@@ -60,7 +60,7 @@ export default class TableMembers {
         this._updateArrayCourses();
         //Index of the member
         let indexMember = -1;
-        //Found the course
+        //Find the course
         this._courses.forEach((objCourse, indexCourse) => {
             if (objCourse.ID === IDcourse) {
                 //Found the member with his email
