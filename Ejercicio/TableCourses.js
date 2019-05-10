@@ -5,7 +5,7 @@ export default class TableCourses {
         //localStorage.removeItem('courses');
         this._table = tableCourses;
         this._courses = new Array();
-        this._tableMembers = new TableMembers(tableMembers);
+        this._tableMembers = new TableMembers(tableMembers, this);
         this._update();
         //Listenner of the form modal
         document.querySelector('#btnRegister').addEventListener('click', () => {
