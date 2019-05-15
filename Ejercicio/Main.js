@@ -7,7 +7,7 @@ export default class Main {
             this._courses = JSON.parse(localStorage.getItem('courses'));
         }
 
-        let tableCourses = new TableCourses(document.querySelector('#tableCourses'), document.querySelector('#tableMembers'));
+        let tableCourses = new TableCourses(document.querySelector('#tableCourses'), document.querySelector('#tableMembers'), null);
 
         document.querySelector('#btnAdd').addEventListener('click', () => {
             if (document.querySelector('#form').checkValidity()) {

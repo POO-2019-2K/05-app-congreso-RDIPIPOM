@@ -1,18 +1,18 @@
 import TableMembers from './TableMembers.js';
 
 export default class TableCourses {
-    constructor(tableCourses, tableMembers) {
+    constructor(tableCourses, tableMembers, IDCourseToShowItsMembers) {
         this._table = tableCourses;
         this._courses = new Array();
         this._tableMembers = new TableMembers(tableMembers, this);
-        this._update();
+        this._update(IDCourseToShowItsMembers);
         //Listenner of the form modal
         document.querySelector('#btnRegister').addEventListener('click', () => {
             this.addMember();
         })
     }
 
-    _update() {
+    _update(IDCourseToShowItsMembers) {
         //Remove all rows of the table
         for (let i = this._table.rows.length - 1; i > 1; i--) {
             this._table.deleteRow(i);
@@ -24,7 +24,14 @@ export default class TableCourses {
             this.addCourse(objCourse);
         });
         if (localStorage.getItem('courses') != null && this._courses.length > 0) {
-            this._tableMembers._update(this._courses[0].ID);
+            //Show the members of the specific course?
+            if (IDCourseToShowItsMembers === null) {
+                //Show the members that the first course
+                this._tableMembers._update(this._courses[0].ID);
+            } else {
+                //Show the members of the specific course
+                this._tableMembers._update(IDCourseToShowItsMembers);
+            }
         }
     }
 
@@ -98,7 +105,7 @@ export default class TableCourses {
     }
 
     _deleteCourse(ID) {
-        this._updateArrayCourses();    
+        this._updateArrayCourses();
         //Find course    
         this._courses.forEach((objCourse, indexCourse) => {
             if (objCourse.ID === ID) {
@@ -107,7 +114,7 @@ export default class TableCourses {
                     //Delete course and save
                     this._courses.splice(indexCourse, 1);
                     localStorage.setItem('courses', JSON.stringify(this._courses));
-                    this._update();
+                    this._update(null);
                     swal.fire({
                         type: 'success',
                         title: 'Taller eliminado',
@@ -117,7 +124,7 @@ export default class TableCourses {
                         type: 'warning',
                         title: 'Advertencia',
                         text: 'No es posible eliminar el taller debido ha que hay participantes incritos'
-                    })                    
+                    })
                 }
                 return;
             }
@@ -130,53 +137,62 @@ export default class TableCourses {
             this._updateArrayCourses();
             //Get ID of the course active
             let ID = Number(localStorage.getItem('courseActive'));
-            if (this._isSpaceAvailable(ID)) {
-                //Create object Member
-                let objMember = {
-                    name: document.querySelector('#name').value,
-                    email: document.querySelector('#email').value,
-                    birthday: document.querySelector('#birthday').value
-                };
+            //Does the member have unique email?
+            if (this._isUniqueEmail(ID, document.querySelector('#email').value)) {
+                //Does it have space?
+                if (this._isSpaceAvailable(ID)) {
+                    //Create object Member
+                    let objMember = {
+                        name: document.querySelector('#name').value,
+                        email: document.querySelector('#email').value,
+                        birthday: document.querySelector('#birthday').value
+                    };
 
-                //Found course in order to edit
-                let course;
-                this._courses.forEach((objCourse) => {
-                    if (objCourse.ID === ID) {
-                        course = objCourse;
-                    }
-                });
+                    //Found course in order to edit
+                    let course;
+                    this._courses.forEach((objCourse) => {
+                        if (objCourse.ID === ID) {
+                            course = objCourse;
+                        }
+                    });
 
-                //Fill array with all members of this course and put the new
-                let arrayMembers = new Array();
-                arrayMembers = course.members;
-                arrayMembers.push(objMember);
-                course.members = arrayMembers;
+                    //Fill array with all members of this course and put the new
+                    let arrayMembers = new Array();
+                    arrayMembers = course.members;
+                    arrayMembers.push(objMember);
+                    course.members = arrayMembers;
 
-                //Add one member to the attribute RegisteredMembers
-                course.registeredMembers++;
+                    //Add one member to the attribute RegisteredMembers
+                    course.registeredMembers++;
 
-                //Update all courses
-                this._courses.forEach((objCourse) => {
-                    if (objCourse.ID === course.ID) {
-                        objCourse = course;
-                        return;
-                    }
-                });
+                    //Update all courses
+                    this._courses.forEach((objCourse) => {
+                        if (objCourse.ID === course.ID) {
+                            objCourse = course;
+                            return;
+                        }
+                    });
 
-                localStorage.setItem('courses', JSON.stringify(this._courses));
+                    localStorage.setItem('courses', JSON.stringify(this._courses));
 
-                //Update tables
-                this._update();
-                this._tableMembers._update(ID);
+                    //Update tables
+                    this._update(null);
+                    this._tableMembers._update(ID);
+                } else {
+                    swal.fire({
+                        type: 'warning',
+                        title: 'Advertencia',
+                        text: 'No existe suficiente espacio en este curso para registrar a una nueva persona'
+                    })
+                }
             } else {
                 swal.fire({
                     type: 'warning',
                     title: 'Advertencia',
-                    text: 'No existe suficiente espacio en este curso para registrar a una nueva persona'
+                    text: 'Este email ya ha sido usado anteriormente en este curso, por favor elija otro'
                 })
             }
-        }
-        else {
+        } else {
             swal.fire({
                 type: 'warning',
                 title: 'Advertencia',
@@ -194,5 +210,23 @@ export default class TableCourses {
             }
         });
         return isSpaceAvailable;
+    }
+
+    _isUniqueEmail(IDcourse, email) {
+        let isUniqueEmail = true;
+        //Find the course
+        this._courses.forEach((objCourse) => {
+            if (Number(objCourse.ID) == IDcourse) {
+                //Found the member with his email
+                objCourse.members.forEach((objMember) => {
+                    if (objMember.email === email) {
+                        isUniqueEmail = false;
+                        return;
+                    }
+                });
+                return;
+            }
+        });
+        return isUniqueEmail;
     }
 }

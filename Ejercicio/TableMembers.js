@@ -1,5 +1,3 @@
-import TableCourses from "./TableCourses.js";
-
 export default class TableMembers {
     constructor(table, tableCourses) {
         this._table = table;
@@ -81,8 +79,8 @@ export default class TableMembers {
         //Save courses
         localStorage.setItem('courses', JSON.stringify(this._courses));
         //Update the table
-        this._update(IDcourse);
-        this._tableCourses._update();
+        //this._update(IDcourse);
+        this._tableCourses._update(IDcourse);
     }
 
     _update(IDcourse) {
