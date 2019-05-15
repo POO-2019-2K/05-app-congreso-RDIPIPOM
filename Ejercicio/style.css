@@ -1,10 +1,10 @@
 body{
     height: 1000px;
-    background-color: peru
+    background-color: #5F5B8C;
 }
 
 .jumbotron{
-    background-color: saddlebrown;
+    background-color: #4A235A;
 }
 
 form{

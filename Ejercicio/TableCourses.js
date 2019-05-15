@@ -116,7 +116,7 @@ export default class TableCourses {
                     localStorage.setItem('courses', JSON.stringify(this._courses));
                     this._update(null);
                     swal.fire({
-                        type: 'success',
+                         type: 'success',
                         title: 'Taller eliminado',
                     })
                 } else {
@@ -148,7 +148,7 @@ export default class TableCourses {
                         birthday: document.querySelector('#birthday').value
                     };
 
-                    //Found course in order to edit
+                    //Find course in order to edit
                     let course;
                     this._courses.forEach((objCourse) => {
                         if (objCourse.ID === ID) {

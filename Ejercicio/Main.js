@@ -11,6 +11,8 @@ export default class Main {
 
         document.querySelector('#btnAdd').addEventListener('click', () => {
             if (document.querySelector('#form').checkValidity()) {
+                //Update the table
+                tableCourses._update();
                 //The ID already exist?                
                 if (!(this._isIDRegister(Number(document.querySelector('#IDcourse').value)))) {
                     //Create object
