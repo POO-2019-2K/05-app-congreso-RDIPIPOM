@@ -1,4 +1,6 @@
  # Ejercicio 5 El Congreso
+ 
+ [![Codacy Badge](https://api.codacy.com/project/badge/Grade/ca037db1fca34fe1af24c4959dbcd303)](https://www.codacy.com/app/RDIPIPOM/05-app-congreso-RDIPIPOM?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=POO-2019-2K/05-app-congreso-RDIPIPOM&amp;utm_campaign=Badge_Grade)
 
 ## Tiempo para realizar la actividad
 
