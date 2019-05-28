@@ -1,6 +1,8 @@
  # Ejercicio 5 El Congreso
  
  [![Codacy Badge](https://api.codacy.com/project/badge/Grade/ca037db1fca34fe1af24c4959dbcd303)](https://www.codacy.com/app/RDIPIPOM/05-app-congreso-RDIPIPOM?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=POO-2019-2K/05-app-congreso-RDIPIPOM&amp;utm_campaign=Badge_Grade)
+ 
+ [![codebeat badge](https://codebeat.co/badges/c6b90edd-517a-4628-ad44-83518df2d9d0)](https://codebeat.co/projects/github-com-poo-2019-2k-06-app-agenda-rdipipom-master)
 
 ## Tiempo para realizar la actividad
 
